@@ -1,0 +1,227 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Web Tools Assistant Chatbot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="./PAGES/harshtech-logo.jpg" type="image/x-icon">
+  <style>
+    :root {
+      --bg: #0e0e0e;
+      --text: #ffffff;
+      --bot: #1e90ff;
+      --user: #333;
+      --focus: #ffcc00;
+    }
+    body.light {
+      --bg: #f9f9f9;
+      --text: #000;
+      --bot: #cce5ff;
+      --user: #eee;
+      --focus: #ff6600;
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .chat-wrapper {
+      display: none;
+      flex-direction: column;
+      height: 100vh;
+    }
+    #chatbox {
+      padding: 15px;
+      height: 65vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .user, .bot {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 10px;
+      max-width: 70%;
+      animation: typing 0.3s ease-in;
+    }
+    .user { background: var(--user); align-self: flex-end; }
+    .bot { background: var(--bot); align-self: flex-start; }
+    .command-buttons, .controls {
+      padding: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+    button {
+      padding: 10px 15px;
+      background: var(--bot);
+      color: black;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .focus-btn {
+      background: var(--focus);
+      color: #000;
+      font-weight: bold;
+    }
+    #loader {
+      display: none;
+      position: fixed;
+      top: 10px;
+      right: 10px;
+    }
+    #formPopup {
+      position: fixed;
+      top: 20%;
+      left: 50%;
+      transform: translate(-50%, -20%);
+      background: #222;
+      color: white;
+      padding: 30px;
+      border-radius: 10px;
+      z-index: 999;
+      text-align: center;
+    }
+    #formPopup input {
+      padding: 10px;
+      width: 80%;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: none;
+    }
+    #harshSubTools {
+      display: none;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+    @keyframes typing {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body><div id="formPopup">
+  <h2>Welcome!</h2>
+  <p>Enter your name to continue:</p>
+  <input type="text" id="userNameInput" placeholder="Your name">
+  <br>
+  <button onclick="startAssistant()">Start Assistant</button>
+</div><div class="chat-wrapper">
+  <div id="chatbox"></div>  <div class="command-buttons" id="toolButtons">
+    <button onclick="handleCommand('open calculator')">Calculator</button>
+    <button onclick="handleCommand('open clock')">Clock</button>
+    <button onclick="handleCommand('open notes')">Notes</button>
+    <button onclick="handleCommand('open to do')">To-Do</button>
+    <button onclick="handleCommand('open calendar')">Calendar</button>
+    <button onclick="handleCommand('open drawing pad')">Drawing Pad</button>
+    <button onclick="handleCommand('open unit converter')">Unit Converter</button>
+    <button onclick="handleCommand('open markdown editor')">Markdown Editor</button>
+    <button onclick="handleCommand('open code editor')">Code Editor</button>
+    <button onclick="handleCommand('open lorem generator')">Lorem Generator</button>
+    <button onclick="handleCommand('open json formatter')">JSON Formatter</button>
+    <button onclick="handleCommand('open qr generator')">QR Generator</button>
+    <button onclick="handleCommand('open base64 encoder')">Base64 Encoder</button>
+    <button onclick="handleCommand('open file compressor')">File Compressor</button>
+    <button onclick="handleCommand('open screenshot tool')">Screenshot Tool</button>
+    <button onclick="handleCommand('open browser info')">Browser Info</button>
+    <button onclick="handleCommand('open resume builder')">Resume Builder</button>
+    <button onclick="handleCommand('open typing speed')">Typing Speed</button>
+    <button onclick="handleCommand('open pdf merger')">PDF Merger</button>
+    <button class="focus-btn" onclick="toggleHarshTools()">HarshTech Tools</button>
+  </div>  <div id="harshSubTools" class="command-buttons">
+    <button onclick="window.open('https://harshtech.in/calculator')">HT Calculator</button>
+    <button onclick="window.open('https://harshtech.in/todo')">HT To-Do</button>
+    <button onclick="window.open('https://harshtech.in/clock')">HT Clock</button>
+    <button onclick="window.open('https://harshtech.in/notes')">HT Notes</button>
+  </div>  <div class="controls">
+    <button onclick="startListening()">🎤 Speak</button>
+    <button onclick="toggleTheme()">🌗 Theme</button>
+    <button onclick="resetChat()">🔁 Reset</button>
+  </div>
+</div><div id="loader"><img src="https://i.ibb.co/XtMHbw3/voice-loading.gif" width="40"></div>
+<center><small><font color="red">&copy; 2025 HarshTech | All Rights Reserved.</font></small></center><br><br><br>
+<script>
+  let username = "User";
+  function startAssistant() {
+    const input = document.getElementById("userNameInput").value.trim();
+    if (input) {
+      username = input;
+      document.getElementById("formPopup").style.display = "none";
+      document.querySelector(".chat-wrapper").style.display = "flex";
+      botReply(`Hello ${username}, welcome to Web Tools Assistant by HarshTech Organization who founder is Harshad Teli.`);
+    }
+  }
+
+  function botReply(text) {
+    const chatbox = document.getElementById("chatbox");
+    const div = document.createElement("div");
+    div.className = "bot";
+    div.textContent = text;
+    chatbox.appendChild(div);
+    chatbox.scrollTop = chatbox.scrollHeight;
+    const utter = new SpeechSynthesisUtterance(text);
+    window.speechSynthesis.speak(utter);
+  }
+
+  function handleCommand(cmd) {
+    botReply("Processing " + cmd);
+    const tools = {
+      "open calculator": "https://www.google.com/search?q=calculator",
+      "open clock": "https://clockify.me",
+      "open notes": "https://keep.google.com",
+      "open to do": "https://todo.microsoft.com",
+      "open calendar": "https://calendar.google.com",
+      "open drawing pad": "https://sketch.io/sketchpad/en/",
+      "open unit converter": "https://www.unitconverters.net/",
+      "open markdown editor": "https://stackedit.io",
+      "open code editor": "https://replit.com",
+      "open lorem generator": "https://loremipsum.io/",
+      "open json formatter": "https://jsonformatter.org",
+      "open qr generator": "https://www.qr-code-generator.com/",
+      "open base64 encoder": "https://www.base64-image.de/",
+      "open file compressor": "https://wecompress.com",
+      "open screenshot tool": "https://www.screenshotmachine.com/",
+      "open browser info": "https://www.whatsmybrowser.org/",
+      "open resume builder": "https://www.resumemaker.online/",
+      "open typing speed": "https://10fastfingers.com",
+      "open pdf merger": "https://www.ilovepdf.com/merge_pdf"
+    };
+    if (tools[cmd]) window.open(tools[cmd], '_blank');
+  }
+
+  function toggleTheme() {
+    document.body.classList.toggle("light");
+  }
+
+  function resetChat() {
+    document.getElementById("chatbox").innerHTML = '';
+    botReply(`Hello again ${username}, how can I help you today?`);
+  }
+
+  function toggleHarshTools() {
+    const div = document.getElementById("harshSubTools");
+    div.style.display = div.style.display === "flex" ? "none" : "flex";
+  }
+
+  function startListening() {
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'en-IN';
+    document.getElementById('loader').style.display = 'block';
+    recognition.start();
+    recognition.onresult = (event) => {
+      const command = event.results[0][0].transcript.toLowerCase();
+      document.getElementById('loader').style.display = 'none';
+      handleCommand(command);
+    };
+    recognition.onerror = () => {
+      document.getElementById('loader').style.display = 'none';
+      botReply("Sorry, I didn't catch that.");
+    }
+  }
+</script>
+<script src="./PAGES/prevent.js"></script>
+</body>
+</html>
